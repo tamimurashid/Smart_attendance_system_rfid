@@ -116,13 +116,13 @@ public:
 
 
 // Access Control Class: Handles API communication
-class AccessControl {
+class Attendance {
 private:
     WiFiClient& client;
     Alert& alert;
 
 public:
-    AccessControl(WiFiClient& client, Alert& alertObj) : client(client), alert(alertObj) {}
+    Attendance(WiFiClient& client, Alert& alertObj) : client(client), alert(alertObj) {}
     String mode = "auth_mod"; // Default mode is Authentication Mode
 
     void rotateServo() {
@@ -244,7 +244,7 @@ public:
 Alert alert;
 RFIDReader rfidReader(SS_PIN, RST_PIN);
 WiFiManager wifiManager;
-AccessControl accessControl(wifiClient, alert);
+Attendance attendance(wifiClient, alert);
 
 
 void setup() {
@@ -272,18 +272,18 @@ void setup() {
 
 void loop() {
      if (WiFi.status() != WL_CONNECTED) { 
-        accessControl.connect(); // Only connect if not already connected
+        attendance.connect(); // Only connect if not already connected
     } else {
         digitalWrite(Card_led, HIGH); // Keep LED on when connected
     }
 
-    accessControl.fetchMode();
+    attendance.fetchMode();
 
     String cardID = rfidReader.readCard();
     if (cardID != "") {
         Serial.print("Card UID: ");
         Serial.println(cardID);
-        accessControl.processCard(cardID);
+        attendance.processCard(cardID);
     }
      delay(2000); // Prevents spamming the server
 }
