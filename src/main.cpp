@@ -16,15 +16,10 @@
 #define alarm D4
 #define servo_motor D8
 
-// WiFi credentials
-// const char* ssid = "Reindeer";        
-// const char* password = "200120022003";  
+
 const char* serverUrl = "http://192.168.10.103:8888/Access_control/Api/";
 const char* serverUrlfetch_mode = "http://192.168.10.103:8888/Access_control/Api/get_mode.php"; //local test
-// const char* serverUrl = "http://13.60.74.47/Acces_control_web/Api/";// ec2 instance 
 
-// Create an instance of the WiFiClient
-// WiFiClient wifiClient;
 WiFiClient wifiClient;
 
 Servo myServo;
@@ -82,6 +77,9 @@ private:
     }
 };
 
+
+//------------------------------------------------------------------------------
+
 // RFID Reader Class
 class RFIDReader {
 private:
@@ -125,11 +123,7 @@ public:
     Attendance(WiFiClient& client, Alert& alertObj) : client(client), alert(alertObj) {}
     String mode = "auth_mod"; // Default mode is Authentication Mode
 
-    void rotateServo() {
-    myServo.write(45);  // Move to 45 degrees clockwise
-    delay(5000);        // Hold position for 5 seconds
-    myServo.write(0);   // Return to the initial position (0 degrees)
-    } 
+   
     void connect() {
          Serial.print("Connecting to WiFi");
     unsigned long startTime = millis();  // Track time
@@ -221,7 +215,6 @@ public:
                 if (code == "001") {
                     alert.green_led(100, 100, 2);
                     alert.successSound(); 
-                    rotateServo();
                     // alert.alarm_alert(100, 100, 3);
                 } else if (code == "000") {
                     alert.red_led(100, 100, 3);
@@ -252,10 +245,6 @@ void setup() {
     Serial.begin(9600);
     while (!Serial);
 
-    myServo.attach(servo_motor); // Attach servo to the defined pin
-    myServo.write(0);  // Set the initial position to 0 degrees
-    delay(1000);
-
     // Set pin modes
     pinMode(Green_led, OUTPUT);
     pinMode(Red_led, OUTPUT);
@@ -267,7 +256,7 @@ void setup() {
     // Initialize Components
     rfidReader.init();
    
-    wifiManager.autoConnect("AccessControlAP");
+    wifiManager.autoConnect("Smart_Attendance_Device");
 }
 
 void loop() {
